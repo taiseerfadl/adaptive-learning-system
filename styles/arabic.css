@@ -1,0 +1,82 @@
+/* ==========================================================================
+   ARABIC — الخطوط العربية، ضبط اتجاه RTL، ومعالجة الأرقام والبيانات اللاتينية
+   ========================================================================== */
+
+/* ---------- استيراد الخطوط ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ---------- ضبط اتجاه المستند ---------- */
+html[dir='rtl'] {
+  direction: rtl;
+}
+
+/* اللغة العربية لا تُكتب بها الحروف بتباعد (letter-spacing) —
+   أي قيمة غير صفرية تكسر اتصال الحروف وتُعد خطأ إملائيًا بصريًا */
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, a, button, input, textarea, label {
+  letter-spacing: 0;
+}
+
+/* تحسين عرض الحروف العربية المتصلة والأربطة (ligatures) */
+body {
+  font-feature-settings: 'liga' 1, 'calt' 1, 'kern' 1;
+  font-kerning: normal;
+}
+
+/* العناوين تستخدم خط Cairo بثقل أعلى ليعطي حضورًا يشبه اللوحات الأكاديمية */
+h1, h2, h3, h4, h5, h6,
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ---------- عزل الاتجاه للبيانات اللاتينية داخل نص عربي ---------- */
+/* الأرقام، التواريخ، رموز التحقق (Hash)، ونصوص QR يجب أن تبقى LTR
+   حتى داخل سياق عربي كامل، مع عزل اتجاهي يمنع "ارتباك ثنائي الاتجاه" */
+.ltr-embed,
+.num,
+[dir='ltr'] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: var(--font-mono);
+}
+
+/* أرقام الدرجات والنسب المئوية ومعرّفات الشهادات */
+.score,
+.percentage,
+.certificate-hash,
+.qr-value {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* ---------- انعكاس الأيقونات الاتجاهية في RTL ---------- */
+/* أيقونات مثل "التالي/رجوع" أو أسهم المسار التكيفي يجب أن تُعكس أفقيًا */
+html[dir='rtl'] .icon-directional {
+  transform: scaleX(-1);
+}
+
+/* ---------- ضبط المحاذاة المنطقية بدلاً من الفيزيائية ---------- */
+/* استخدام margin-inline / padding-inline في كل الملفات بدل left/right
+   يجعل التبديل بين RTL/LTR (لو احتاج المشروع لاحقًا لواجهة إنجليزية) آمنًا */
+.text-start { text-align: start; }
+.text-end { text-align: end; }
+
+/* ---------- تحسين ارتفاع الأسطر لطول الكلمة العربية ---------- */
+.prose-ar {
+  line-height: var(--leading-relaxed);
+  font-family: var(--font-body);
+  max-width: 68ch;
+}
+
+/* ---------- ضبط الفواصل الرقمية (اختياري: أرقام هندية-عربية) ---------- */
+/* في حال رغبت الواجهة بعرض الأرقام بالصيغة الشرقية (١٢٣) بدل (123)
+   يُفعَّل عبر إضافة الكلاس التالي على العنصر الحاوي فقط، دون كسر
+   عزل الاتجاه الخاص بالبيانات (score/hash) أعلاه */
+.numerals-eastern {
+  font-variant-numeric: normal;
+  font-feature-settings: 'ss01' 1;
+}

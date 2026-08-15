@@ -1,0 +1,119 @@
+/* ==========================================================================
+   VARIABLES — نظام تصميم منصة التعلم التكيفي
+   الهوية: "حبر ليلي + ختم ذهبي" — مستوحاة من التوثيق الأكاديمي الرقمي
+   (الشهادات، التوقيع الرقمي، رمز QR) والمسار التكيفي المتفرع للطالب.
+   ========================================================================== */
+
+:root {
+  /* ---------- الألوان: طبقات الحبر (الخلفيات) ---------- */
+  --color-ink-950: #0b0c14;   /* الخلفية الأعمق */
+  --color-ink-900: #12141f;   /* خلفية الصفحة الأساسية */
+  --color-ink-800: #1a1d2b;   /* سطح البطاقات */
+  --color-ink-700: #232739;   /* سطح مرتفع (Modals, Dropdowns) */
+  --color-ink-600: #2f3448;   /* الحدود والفواصل */
+  --color-ink-500: #454b64;   /* حدود تفاعلية / أيقونات ثانوية */
+
+  /* ---------- الألوان: الورق (النصوص) ---------- */
+  --color-paper-100: #f3f0e8; /* النص الأساسي — أبيض دافئ كالورق */
+  --color-paper-300: #cbc7ba; /* النص الثانوي */
+  --color-paper-500: #8d8a7c; /* نص خافت / placeholders */
+
+  /* ---------- اللون المحوري: الختم الذهبي ---------- */
+  --color-gold-300: #e3c98a;
+  --color-gold-400: #d9b579;
+  --color-gold-500: #c9a15a;  /* اللون المحوري للعلامة والتفاعل */
+  --color-gold-600: #a8813f;
+  --color-gold-glow: rgba(201, 161, 90, 0.35);
+
+  /* ---------- لون تفاعلي ثانوي (روابط/أزرار ثانوية) ---------- */
+  --color-azure-400: #7ea3f0;
+  --color-azure-500: #5b8def;
+
+  /* ---------- ألوان تصنيف الطلاب (🟢🟡🔴) — جزء من الهوية لا إضافة عليها ---------- */
+  --color-advanced-500: #4bab7c;
+  --color-advanced-100: rgba(75, 171, 124, 0.14);
+  --color-advanced-border: rgba(75, 171, 124, 0.4);
+
+  --color-intermediate-500: #dfa64d;
+  --color-intermediate-100: rgba(223, 166, 77, 0.14);
+  --color-intermediate-border: rgba(223, 166, 77, 0.4);
+
+  --color-support-500: #e2665a;
+  --color-support-100: rgba(226, 102, 90, 0.14);
+  --color-support-border: rgba(226, 102, 90, 0.4);
+
+  /* ---------- حالات النظام ---------- */
+  --color-success: var(--color-advanced-500);
+  --color-warning: var(--color-intermediate-500);
+  --color-danger: var(--color-support-500);
+  --color-info: var(--color-azure-500);
+
+  /* ---------- الطباعة (Typography) ---------- */
+  --font-display: 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-body: 'Tajawal', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* سلم الأحجام (Fluid Type Scale) */
+  --text-xs:   clamp(0.72rem, 0.68rem + 0.2vw, 0.78rem);
+  --text-sm:   clamp(0.84rem, 0.8rem + 0.2vw, 0.9rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1rem);
+  --text-lg:   clamp(1.05rem, 1rem + 0.3vw, 1.15rem);
+  --text-xl:   clamp(1.25rem, 1.15rem + 0.5vw, 1.45rem);
+  --text-2xl:  clamp(1.6rem, 1.4rem + 1vw, 1.95rem);
+  --text-3xl:  clamp(2rem, 1.7rem + 1.5vw, 2.6rem);
+  --text-4xl:  clamp(2.6rem, 2.1rem + 2.4vw, 3.6rem);
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.85;   /* النص العربي يحتاج تباعد أسطر أكبر */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---------- المسافات (Spacing Scale — أساس 4px) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  /* ---------- الحواف والاستدارة ---------- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-full: 999px;
+
+  /* ---------- الظلال (مصممة لخلفية داكنة) ---------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+  --shadow-gold-glow: 0 0 0 1px var(--color-gold-500),
+                       0 0 24px var(--color-gold-glow);
+
+  /* ---------- الحركة ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-base: 280ms;
+  --duration-slow: 480ms;
+
+  /* ---------- طبقات العرض (Z-Index Scale) ---------- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* ---------- الحاوية (Container) ---------- */
+  --container-max: 1240px;
+  --container-padding: clamp(1rem, 4vw, 2.5rem);
+}
