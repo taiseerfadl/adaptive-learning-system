@@ -1,76 +1,56 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { ShieldAlert } from 'lucide-react';
-import { Spinner, Button } from '@/components/ui';
-import { useAuth } from '@/context/auth-context';
-import type { AccountType } from '@/types';
+import * as React from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  /** أنواع الحسابات المسموح لها بالوصول؛ اتركها فارغة للسماح لأي مستخدم مسجّل دخول */
-  allowedRoles?: AccountType[];
-  /** المسار الذي يُعاد توجيه الزائر غير المسجّل إليه */
-  loginPath?: string;
+  allowedRoles?: string[];
 }
 
-/**
- * ProtectedRoute — يغلّف صفحات لوحة التحكم فيمنع وصول الزوار غير المسجَّلين،
- * ويمنع أصحاب الأدوار غير المصرَّح لها من عرض صفحات لا تخصهم
- * (مثال: طالب يحاول فتح مسار خاص بالإدارة).
- */
-function ProtectedRoute({ children, allowedRoles, loginPath = '/login' }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthenticated } = useAuth();
+export function ProtectedRoute({
+  children,
+  allowedRoles,
+}: ProtectedRouteProps) {
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  React.useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      const redirectParam = typeof window !== 'undefined' ? `?redirect=${encodeURIComponent(window.location.pathname)}` : '';
-      router.replace(`${loginPath}${redirectParam}`);
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated || !user) {
+        router.push("/auth/login");
+      } else if (allowedRoles && !allowedRoles.includes(user.accountType)) {
+        const roleHome =
+          user.accountType === "trainer"
+            ? "/instructor"
+            : user.accountType === "institution"
+              ? "/institution"
+              : user.accountType === "admin"
+                ? "/admin"
+                : "/student";
+        router.push(roleHome);
+      }
     }
-  }, [isLoading, isAuthenticated, loginPath, router]);
+  }, [loading, isAuthenticated, user, allowedRoles, router]);
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
         <Spinner size="lg" />
-        <p className="text-sm text-slate-500">جارٍ التحقق من الجلسة...</p>
       </div>
     );
   }
 
   if (!isAuthenticated || !user) {
-    // في طور إعادة التوجيه إلى صفحة الدخول
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
+    return null;
   }
 
-  const isRoleAllowed = !allowedRoles || allowedRoles.includes(user.accountType);
-
-  if (!isRoleAllowed) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 text-red-400">
-          <ShieldAlert className="h-6 w-6" aria-hidden="true" />
-        </span>
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-lg font-semibold text-slate-100">لا تملك صلاحية الوصول</h2>
-          <p className="max-w-sm text-sm text-slate-500">
-            هذه الصفحة مخصصة لأنواع حسابات أخرى، ولا تملك حسابك الصلاحية لعرضها.
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => router.push('/dashboard')}>
-          العودة إلى لوحة التحكم
-        </Button>
-      </div>
-    );
+  if (allowedRoles && !allowedRoles.includes(user.accountType)) {
+    return null;
   }
 
   return <>{children}</>;
 }
-
-export { ProtectedRoute };

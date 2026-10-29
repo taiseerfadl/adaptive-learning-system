@@ -1,5 +1,5 @@
-export type LessonLevel = 'basic' | 'advanced';
-export type ContentType = 'video' | 'file' | 'text';
+export type LessonLevel = "basic" | "advanced";
+export type ContentType = "video" | "file" | "text";
 
 /**
  * Lesson — "أحدد أي الدروس أساسية، وأيها متقدمة، وما الذي يجب أن يتقنه
@@ -19,7 +19,7 @@ export interface Lesson {
   prerequisiteLessonIds: string[]; // ما يجب إتقانه قبل الانتقال لهذا الدرس
 
   // منطق التعلم التكيفي: الدرس التالي حسب نتيجة الاختبار
-  nextLessonIdOnPass: string | null;     // درجة ≥ 80% → درس أصعب
-  nextLessonIdOnAverage: string | null;  // 40% - 79% → إعادة/تعزيز
-  nextLessonIdOnFail: string | null;     // < 40% → درس تأسيسي
+  nextLessonIdOnPass: string | null; // درجة ≥ 80% → درس أصعب
+  nextLessonIdOnAverage: string | null; // 40% - 79% → إعادة/تعزيز
+  nextLessonIdOnFail: string | null; // < 40% → درس تأسيسي
 }

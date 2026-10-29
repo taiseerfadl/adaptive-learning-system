@@ -1,175 +1,151 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { Button, Input, Checkbox } from '@/components/ui';
-import { useAuth } from '@/context/auth-context';
-import type { LoginDTO } from '@/types';
+import * as React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { FormField } from "@/components/forms/form-field";
+import { FormError } from "@/components/forms/form-error";
+import { FormSuccess } from "@/components/forms/form-success";
+import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/context/language-context";
 
-interface FormErrors {
-  email?: string;
-  password?: string;
-}
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function validate(values: LoginDTO): FormErrors {
-  const errors: FormErrors = {};
-  if (!values.email.trim()) {
-    errors.email = 'البريد الإلكتروني مطلوب';
-  } else if (!EMAIL_PATTERN.test(values.email)) {
-    errors.email = 'صيغة البريد الإلكتروني غير صحيحة';
-  }
-  if (!values.password) {
-    errors.password = 'كلمة المرور مطلوبة';
-  } else if (values.password.length < 8) {
-    errors.password = 'كلمة المرور يجب ألا تقل عن 8 أحرف';
-  }
-  return errors;
-}
-
-interface LoginFormProps {
-  /** المسار الذي يُعاد توجيه المستخدم إليه بعد نجاح الدخول */
-  redirectTo?: string;
-  className?: string;
-}
-
-function LoginForm({ redirectTo = '/dashboard', className }: LoginFormProps) {
+export function LoginForm() {
   const router = useRouter();
-  const { login } = useAuth();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("from");
+  const { refreshUser } = useAuth();
+  const { t } = useLanguage();
 
-  const [values, setValues] = React.useState<LoginDTO>({ email: '', password: '' });
-  const [rememberMe, setRememberMe] = React.useState(true);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [errors, setErrors] = React.useState<FormErrors>({});
-  const [serverError, setServerError] = React.useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  function handleChange(field: keyof LoginDTO) {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValues((prev) => ({ ...prev, [field]: e.target.value }));
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-      if (serverError) setServerError(null);
-    };
-  }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const fieldErrors = validate(values);
-    setErrors(fieldErrors);
-    if (Object.keys(fieldErrors).length > 0) return;
-
-    setIsSubmitting(true);
-    setServerError(null);
     try {
-      await login(values);
-      router.push(redirectTo);
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ identifier, password, rememberMe }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || t("errors.failedToLoad", undefined, "فشل تسجيل الدخول"));
+      }
+
+      setSuccess(t("common.welcome", undefined, "تم تسجيل الدخول بنجاح، جاري التحويل..."));
+      await refreshUser();
+      const rawRole = (data.user?.accountType ?? data.user?.role ?? "").toString().toUpperCase();
+      const roleHome =
+        rawRole === "ADMIN" ? "/admin" :
+          (rawRole === "INSTRUCTOR" || rawRole === "TRAINER") ? "/instructor" :
+            rawRole === "INSTITUTION" ? "/institution" :
+              "/student";
+      // Never let a stale `from` value send a newly authenticated user to
+      // another role's area. Role-specific pages enforce authorization too.
+      const safeRedirect = redirectUrl &&
+        redirectUrl.startsWith("/") &&
+        !redirectUrl.startsWith("//") &&
+        !["/admin", "/student", "/instructor", "/institution"].some(
+          (base) => redirectUrl === base || redirectUrl.startsWith(base + "/")
+        )
+        ? redirectUrl
+        : roleHome;
+      router.push(safeRedirect);
+      router.refresh();
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : 'تعذّر تسجيل الدخول، حاول مرة أخرى');
+      setError(err instanceof Error ? err.message : t("errors.unexpectedErrorTitle", undefined, "حدث خطأ غير متوقع"));
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <form noValidate onSubmit={handleSubmit} className={className}>
-      <div className="flex flex-col gap-5">
-        {serverError && (
-          <div
-            role="alert"
-            className="flex items-start gap-2.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3.5 py-3 text-sm text-red-300"
-          >
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>{serverError}</span>
-          </div>
-        )}
+    <Card className="w-full max-w-md mx-auto rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl">
+      <CardHeader className="text-center space-y-2">
+        <CardTitle className="text-2xl font-bold font-display text-[var(--color-text)]">
+          {t("auth.loginTitle", undefined, "تسجيل الدخول")}
+        </CardTitle>
+        <CardDescription className="text-[var(--color-text-secondary)]">
+          {t("auth.loginDescription", undefined, "استخدم البريد الإلكتروني أو اسم المستخدم أو رقم الهاتف")}
+        </CardDescription>
+      </CardHeader>
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="login-email" className="text-sm font-medium text-slate-300">
-            البريد الإلكتروني
-          </label>
-          <div className="relative flex items-center">
-            <Mail className="pointer-events-none absolute start-3 h-4 w-4 text-slate-500" aria-hidden="true" />
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FormError message={error || undefined} />
+          <FormSuccess message={success || undefined} />
+
+          <FormField label={t("auth.identifierLabel", undefined, "البريد أو اسم المستخدم أو رقم الهاتف")} required>
             <Input
-              id="login-email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="name@example.com"
-              className="ps-9"
-              value={values.email}
-              onChange={handleChange('email')}
-              error={!!errors.email}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'login-email-error' : undefined}
+              type="text"
+              value={identifier}
+              onChange={(event) => setIdentifier(event.target.value)}
+              placeholder={t("auth.identifierPlaceholder", undefined, "example@domain.com أو username أو +967...")}
+              required
+              disabled={loading}
+              autoComplete="username"
+              className="dir-ltr text-left"
             />
-          </div>
-          {errors.email && (
-            <p id="login-email-error" className="text-xs text-red-400">
-              {errors.email}
-            </p>
-          )}
-        </div>
+          </FormField>
 
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between">
-            <label htmlFor="login-password" className="text-sm font-medium text-slate-300">
-              كلمة المرور
-            </label>
-            <Link href="/forgot-password" className="text-xs font-medium text-blue-400 hover:text-blue-300">
-              نسيت كلمة المرور؟
+          <FormField label={t("auth.passwordLabel", undefined, "كلمة المرور")} required>
+            <PasswordInput
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="ادخل كلمة المرور"
+              required
+              disabled={loading}
+              autoComplete="current-password"
+            />
+          </FormField>
+
+          <div className="flex items-center justify-between text-sm">
+          
+            <Link
+              href="/auth/forgot-password"
+              className="text-blue-400 hover:underline text-xs sm:text-sm font-medium"
+            >
+              {t("auth.forgotPasswordLink", undefined, "نسيت كلمة المرور؟")}
             </Link>
           </div>
-          <div className="relative flex items-center">
-            <Lock className="pointer-events-none absolute start-3 h-4 w-4 text-slate-500" aria-hidden="true" />
-            <Input
-              id="login-password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              placeholder="••••••••"
-              className="ps-9 pe-9"
-              value={values.password}
-              onChange={handleChange('password')}
-              error={!!errors.password}
-              aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? 'login-password-error' : undefined}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              className="absolute end-3 text-slate-500 hover:text-slate-300"
-              aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
+
+          <Button type="submit" className="w-full h-11" isLoading={loading}>
+            {t("auth.loginSubmit", undefined, "تسجيل الدخول")}
+          </Button>
+
+          <div className="text-center text-xs text-[var(--color-text-secondary)] pt-2">
+            {t("auth.dontHaveAccount", undefined, "ليس لديك حساب؟")}{" "}
+            <Link
+              href="/auth/register"
+              className="text-blue-400 hover:underline font-semibold"
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
+              {t("auth.registerNow", undefined, "إنشاء حساب جديد")}
+            </Link>
           </div>
-          {errors.password && (
-            <p id="login-password-error" className="text-xs text-red-400">
-              {errors.password}
-            </p>
-          )}
-        </div>
-
-        <label className="flex items-center gap-2.5 text-sm text-slate-400">
-          <Checkbox checked={rememberMe} onCheckedChange={(v) => setRememberMe(v === true)} />
-          تذكرني
-        </label>
-
-        <Button type="submit" size="lg" isLoading={isSubmitting} className="w-full">
-          تسجيل الدخول
-        </Button>
-
-        <p className="text-center text-sm text-slate-500">
-          ليس لديك حساب؟{' '}
-          <Link href="/register" className="font-medium text-blue-400 hover:text-blue-300">
-            أنشئ حسابًا جديدًا
-          </Link>
-        </p>
-      </div>
-    </form>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
-
-export { LoginForm };

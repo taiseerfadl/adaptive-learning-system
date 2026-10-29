@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ChevronLeft, Home } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronRight, Home } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/context/language-context";
 
 export interface BreadcrumbItem {
   label: string;
@@ -20,12 +20,15 @@ interface BreadcrumbsProps {
 }
 
 function toTitleCase(segment: string): string {
-  return segment.replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+  return segment.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
 }
 
-function buildItemsFromPathname(pathname: string, segmentLabels?: Record<string, string>): BreadcrumbItem[] {
-  const segments = pathname.split('/').filter(Boolean);
-  let accumulatedHref = '';
+function buildItemsFromPathname(
+  pathname: string,
+  segmentLabels?: Record<string, string>,
+): BreadcrumbItem[] {
+  const segments = pathname.split("/").filter(Boolean);
+  let accumulatedHref = "";
   return segments.map((segment, index) => {
     accumulatedHref += `/${segment}`;
     const isLast = index === segments.length - 1;
@@ -38,34 +41,64 @@ function buildItemsFromPathname(pathname: string, segmentLabels?: Record<string,
 
 function Breadcrumbs({ items, segmentLabels, className }: BreadcrumbsProps) {
   const pathname = usePathname();
-  const resolvedItems = items ?? buildItemsFromPathname(pathname, segmentLabels);
+  const { t } = useLanguage();
+  const resolvedItems =
+    items ?? buildItemsFromPathname(pathname, segmentLabels);
 
   if (resolvedItems.length === 0) return null;
 
   return (
-    <nav aria-label="مسار التنقّل" className={cn('flex items-center', className)}>
+    <nav
+      aria-label={t("nav.home", undefined, "مسار التنقّل")}
+      className={cn("flex items-center", className)}
+    >
       <ol className="flex flex-wrap items-center gap-1.5 text-sm">
         <li className="flex items-center gap-1.5">
-          <Link href="/dashboard" className="flex items-center text-slate-500 transition-colors hover:text-slate-200">
+          <Link
+            href="/"
+            className="flex items-center text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+          >
             <Home className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="sr-only">الرئيسية</span>
+            <span className="sr-only">{t("nav.home", undefined, "الرئيسية")}</span>
           </Link>
-          <ChevronLeft className="h-3.5 w-3.5 text-slate-700" aria-hidden="true" />
+          <ChevronRight
+            className="icon-directional h-3.5 w-3.5 text-[var(--color-text-muted)]"
+            aria-hidden="true"
+          />
         </li>
         {resolvedItems.map((item, index) => {
           const isLast = index === resolvedItems.length - 1;
           return (
-            <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
+            <li
+              key={`${item.label}-${index}`}
+              className="flex items-center gap-1.5"
+            >
               {item.href && !isLast ? (
-                <Link href={item.href} className="text-slate-500 transition-colors hover:text-slate-200">
+                <Link
+                  href={item.href}
+                  className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)]"
+                >
                   {item.label}
                 </Link>
               ) : (
-                <span className={cn('font-medium', isLast ? 'text-slate-200' : 'text-slate-500')} aria-current={isLast ? 'page' : undefined}>
+                <span
+                  className={cn(
+                    "font-medium",
+                    isLast
+                      ? "text-[var(--color-text)]"
+                      : "text-[var(--color-text-muted)]",
+                  )}
+                  aria-current={isLast ? "page" : undefined}
+                >
                   {item.label}
                 </span>
               )}
-              {!isLast && <ChevronLeft className="h-3.5 w-3.5 text-slate-700" aria-hidden="true" />}
+              {!isLast && (
+                <ChevronRight
+                  className="icon-directional h-3.5 w-3.5 text-[var(--color-text-muted)]"
+                  aria-hidden="true"
+                />
+              )}
             </li>
           );
         })}

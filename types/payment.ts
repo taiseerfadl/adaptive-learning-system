@@ -1,4 +1,4 @@
-export type PaymentStatus = 'pending' | 'success' | 'failed';
+export type PaymentStatus = "pending" | "success" | "failed";
 
 /**
  * Payment — "سأدفع باستخدام إحدى المحافظ الإلكترونية اليمنية، وبعد نجاح

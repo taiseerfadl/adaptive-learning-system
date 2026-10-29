@@ -1,10 +1,10 @@
 export type NotificationType =
-  | 'course_approved'
-  | 'course_rejected'
-  | 'student_needs_support'
-  | 'payment_success'
-  | 'new_certificate'
-  | 'live_session_reminder';
+  | "course_approved"
+  | "course_rejected"
+  | "student_needs_support"
+  | "payment_success"
+  | "new_certificate"
+  | "live_session_reminder";
 
 /**
  * Notification — "يقترح النظام للمدرب تقديم شرح إضافي أو التواصل معهم

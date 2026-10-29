@@ -1,13 +1,169 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
+}
+
+enum Role {
+  ADMIN       @map("Admin")
+  INSTITUTION @map("Institution")
+  INSTRUCTOR  @map("Instructor")
+  STUDENT     @map("Student")
+}
+
+enum UserStatus {
+  ACTIVE    @map("Active")
+  INACTIVE  @map("Inactive")
+  SUSPENDED @map("Suspended")
+}
+
+enum InstructorType {
+  INDEPENDENT   @map("Independent")
+  INSTITUTIONAL @map("Institutional")
+}
+
+enum PermissionLevel {
+  SUPER_ADMIN @map("SuperAdmin")
+  MODERATOR   @map("Moderator")
+}
+
+model User {
+  id              Int        @id @default(autoincrement()) @map("user_id")
+  name            String?    @db.VarChar(100)
+  username        String     @unique @db.VarChar(50)
+  email           String?    @unique @db.VarChar(100)
+  phoneNumber     String?    @unique @map("phone_number") @db.VarChar(20)
+  passwordHash    String     @map("password_hash") @db.VarChar(255)
+  profileImageUrl String?    @map("profile_image_url") @db.VarChar(255)
+  role            Role
+  status          UserStatus @default(ACTIVE)
+  emailVerified   Boolean    @default(false) @map("email_verified")
+  phoneVerified   Boolean    @default(false) @map("phone_verified")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime?  @map("updated_at")
+
+  student        Student?
+  instructor     Instructor?
+  institution    Institution?
+  admin          Admin?
+  sessions       Session[]
+  emailTokens    EmailVerificationToken[]
+  phoneTokens    PhoneVerificationToken[]
+  passwordTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+model Student {
+  userId         Int     @id @map("user_id")
+  major          String? @db.VarChar(100)
+  academicLevel  String? @map("academic_level") @db.VarChar(50)
+  progressPoints Int     @default(0) @map("progress_points")
+  academicId     String? @map("academic_id") @db.VarChar(50)
+  institutionId  Int?    @map("institution_id")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution Institution? @relation(fields: [institutionId], references: [userId], onDelete: SetNull)
+
+  @@unique([institutionId, academicId])
+  @@index([institutionId])
+  @@map("students")
+}
+
+model Instructor {
+  userId         Int             @id @map("user_id")
+  cvUrl          String?         @map("cv_url") @db.VarChar(255)
+  instructorType InstructorType? @default(INDEPENDENT) @map("instructor_type")
+  academicId     String?         @map("academic_id") @db.VarChar(50)
+  institutionId  Int?            @map("institution_id")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution Institution? @relation(fields: [institutionId], references: [userId], onDelete: SetNull)
+
+  @@unique([institutionId, academicId])
+  @@index([institutionId])
+  @@map("instructors")
+}
+
+model Institution {
+  userId               Int     @id @map("user_id")
+  commercialRegistryNo String? @unique @map("commercial_registry_no") @db.VarChar(50)
+  contactPersonName    String  @map("contact_person_name") @db.VarChar(100)
+  subscriptionPlan     String? @default("monthly") @map("subscription_plan") @db.VarChar(50)
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  students    Student[]
+  instructors Instructor[]
+
+  @@map("institutions")
+}
+
+model Admin {
+  userId          Int             @id @map("user_id")
+  permissionLevel PermissionLevel @default(MODERATOR) @map("permission_level")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admins")
+}
+
+model Session {
+  id               String   @id @default(cuid())
+  userId           Int      @map("user_id")
+  refreshTokenHash String   @unique @map("refresh_token_hash") @db.Char(64)
+  expiresAt        DateTime @map("expires_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    Int      @map("user_id")
+  tokenHash String   @unique @map("token_hash") @db.Char(64)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("email_verification_tokens")
+}
+
+model PhoneVerificationToken {
+  id        String   @id @default(cuid())
+  userId    Int      @map("user_id")
+  codeHash  String   @map("code_hash") @db.Char(64)
+  expiresAt DateTime @map("expires_at")
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("phone_verification_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    Int      @map("user_id")
+  tokenHash String   @unique @map("token_hash") @db.Char(64)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
 }

@@ -1,4 +1,4 @@
-export type CertificateType = 'attendance' | 'accredited';
+export type CertificateType = "attendance" | "accredited";
 
 /**
  * Certificate — "أحصل على شهادة حضور" (مدرب مستقل) أو "شهادة معتمدة" (مؤسسة)
@@ -25,5 +25,5 @@ export interface CertificateVerificationLog {
   certificateId: string;
   verifiedByIp?: string;
   verifiedAt: string;
-  result: 'valid' | 'invalid';
+  result: "valid" | "invalid";
 }

@@ -1,7 +1,5 @@
 export type AdaptiveOutcome =
-  | 'advance_to_harder'
-  | 'repeat_same_level'
-  | 'return_to_foundational';
+  "advance_to_harder" | "repeat_same_level" | "return_to_foundational";
 
 /**
  * Attempt (QuizResult) — "إذا حصلت على درجة عالية، ينقلني النظام إلى درس أصعب.

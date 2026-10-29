@@ -1,4 +1,4 @@
-export type PerformanceCategory = 'advanced' | 'intermediate' | 'needs_support'; // 🟢 🟡 🔴
+export type PerformanceCategory = "advanced" | "intermediate" | "needs_support"; // 🟢 🟡 🔴
 
 /**
  * StudentClassification — "لا يعرض النظام للمدرب درجات الطلاب فقط، بل يحلل أداءهم
@@ -33,7 +33,7 @@ export interface SuggestedActivity {
   id: string;
   studentId: string;
   courseId: string;
-  type: 'extra_challenge' | 'additional_explanation' | 'trainer_contact';
+  type: "extra_challenge" | "additional_explanation" | "trainer_contact";
   description: string;
   createdAt: string;
 }

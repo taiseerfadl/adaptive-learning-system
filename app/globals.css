@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   المتغيرات — روابط بأسماء نظام التصميم الأصلي، مربوطة بهوية أزرق/كحلي/أبيض
+   بدّلت التوقيع الذهبي (gold) بالأزرق (blue) ليطابق هوية المنصة المعتمدة.
+   ========================================================================== */
+:root {
+  /* الكحلي (خلفيات) */
+  --color-ink-950: theme("colors.slate.950");
+  --color-ink-900: theme("colors.slate.950");
+  --color-ink-800: theme("colors.slate.900");
+  --color-ink-700: theme("colors.slate.800");
+  --color-ink-600: theme("colors.slate.700");
+
+  /* الورق (نصوص) */
+  --color-paper-100: theme("colors.slate.100");
+  --color-paper-300: theme("colors.slate.400");
+  --color-paper-500: theme("colors.slate.500");
+
+  /* لون التوقيع — أزرق بدل الذهبي */
+  --color-accent-400: theme("colors.blue.400");
+  --color-accent-500: theme("colors.blue.500");
+
+  /* شارات تصنيف الطلاب */
+  --color-advanced-100: rgb(16 185 129 / 10%);
+  --color-advanced-500: theme("colors.emerald.300");
+  --color-advanced-border: rgb(16 185 129 / 25%);
+
+  --color-intermediate-100: rgb(245 158 11 / 10%);
+  --color-intermediate-500: theme("colors.amber.300");
+  --color-intermediate-border: rgb(245 158 11 / 25%);
+
+  --color-support-100: rgb(239 68 68 / 10%);
+  --color-support-500: theme("colors.red.300");
+  --color-support-border: rgb(239 68 68 / 25%);
+
+  /* الطباعة */
+  --font-display: var(--font-cairo), Tahoma, Arial, sans-serif;
+  --font-body: var(--font-cairo), Tahoma, Arial, sans-serif;
+
+  /* الأبعاد والمسافات */
+  --container-max: 1280px;
+  --container-padding: 1rem;
+  --radius-sm: 0.25rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --shadow-md: 0 10px 30px -12px rgb(0 0 0 / 0.45);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --container-padding: 2rem;
+  }
+}
+
+@layer base {
+  /* ---------- إعادة الضبط الإضافية (تكمّل Tailwind preflight) ---------- */
+  html {
+    block-size: 100%;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-block-size: 100%;
+    @apply bg-slate-950 text-slate-100 antialiased;
+    direction: rtl;
+    text-align: right;
+    font-family: var(--font-body);
+    text-rendering: optimizeLegibility;
+    font-feature-settings:
+      "ss01" on,
+      "ss02" on;
+    /* خلفية دقيقة بنسيج "الورق الليلي" — بدون أي تشتيت بصري، بدرجات الأزرق */
+    background-image:
+      radial-gradient(
+        circle at 15% -10%,
+        rgb(37 99 235 / 0.1),
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 100% 10%,
+        rgb(14 165 233 / 0.08),
+        transparent 40%
+      );
+    background-attachment: fixed;
+  }
+
+  img,
+  picture,
+  video,
+  svg {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  /* ---------- الطباعة الافتراضية ---------- */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-paper-100);
+  }
+
+  h1 {
+    font-size: 2.25rem;
+  }
+  h2 {
+    font-size: 1.875rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 1.25rem;
+  }
+  h5 {
+    font-size: 1.125rem;
+  }
+
+  p {
+    color: var(--color-paper-300);
+    line-height: 1.7;
+  }
+
+  small {
+    font-size: 0.75rem;
+    color: var(--color-paper-500);
+  }
+
+  /* ---------- شريط تمرير مخصص متناسق مع هوية أزرق/كحلي ---------- */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: theme("colors.slate.950");
+  }
+  ::-webkit-scrollbar-thumb {
+    background: theme("colors.slate.700");
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme("colors.blue.700");
+  }
+
+  /* ---------- التحديد والتركيز ---------- */
+  ::selection {
+    background-color: theme("colors.blue.600");
+    color: theme("colors.white");
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-400);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ---------- احترام تفضيل تقليل الحركة ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---------- الحاوية العامة ---------- */
+  .container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  /* ---------- بطاقة سطحية أساسية (Surface) — بديل عام لمكوّن Card ---------- */
+  .surface {
+    background-color: var(--color-ink-800);
+    border: 1px solid var(--color-ink-600);
+    border-radius: var(--radius-lg);
+  }
+
+  .surface--elevated {
+    background-color: var(--color-ink-700);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ---------- شارة التوقيع البصري (كانت ذهبية، أصبحت أزرق الهوية) ---------- */
+  .seal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-inline: var(--space-4);
+    padding-block: var(--space-2);
+    border: 1px solid var(--color-accent-500);
+    border-radius: var(--radius-full);
+    color: var(--color-accent-400);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  /* ---------- شارات تصنيف الطلاب (متقدّم / متوسط / بحاجة دعم) ---------- */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+    padding-block: var(--space-1);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+  }
+
+  .status-pill--advanced {
+    background-color: var(--color-advanced-100);
+    border-color: var(--color-advanced-border);
+    color: var(--color-advanced-500);
+  }
+
+  .status-pill--intermediate {
+    background-color: var(--color-intermediate-100);
+    border-color: var(--color-intermediate-border);
+    color: var(--color-intermediate-500);
+  }
+
+  .status-pill--support {
+    background-color: var(--color-support-100);
+    border-color: var(--color-support-border);
+    color: var(--color-support-500);
+  }
+}

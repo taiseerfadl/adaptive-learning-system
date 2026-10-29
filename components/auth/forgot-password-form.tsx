@@ -1,148 +1,98 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import Link from 'next/link';
-import { Mail, AlertCircle, MailCheck, ArrowRight } from 'lucide-react';
-import { Button, Input } from '@/components/ui';
+import * as React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/forms/form-field";
+import { FormError } from "@/components/forms/form-error";
+import { FormSuccess } from "@/components/forms/form-success";
+import { useLanguage } from "@/context/language-context";
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+export function ForgotPasswordForm() {
+  const { t } = useLanguage();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-interface ForgotPasswordFormProps {
-  className?: string;
-}
-
-function ForgotPasswordForm({ className }: ForgotPasswordFormProps) {
-  const [email, setEmail] = React.useState('');
-  const [error, setError] = React.useState<string | null>(null);
-  const [serverError, setServerError] = React.useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [isSent, setIsSent] = React.useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
-      setError('البريد الإلكتروني مطلوب');
-      return;
-    }
-    if (!EMAIL_PATTERN.test(email)) {
-      setError('صيغة البريد الإلكتروني غير صحيحة');
-      return;
-    }
-
     setError(null);
-    setServerError(null);
-    setIsSubmitting(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-      // نعرض حالة النجاح دائمًا (حتى لو لم يكن البريد مسجّلًا) لمنع تسريب
-      // معلومة وجود الحساب من عدمه — ممارسة أمنية قياسية.
-      if (!res.ok && res.status >= 500) {
-        throw new Error('تعذّر إرسال الطلب حاليًا، حاول لاحقًا');
-      }
-      setIsSent(true);
-    } catch (err) {
-      setServerError(err instanceof Error ? err.message : 'تعذّر إرسال الطلب حاليًا، حاول لاحقًا');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+    setSuccess(null);
+    setLoading(true);
 
-  if (isSent) {
-    return (
-      <div className={className}>
-        <div className="flex flex-col items-center gap-4 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-400">
-            <MailCheck className="h-6 w-6" aria-hidden="true" />
-          </span>
-          <div className="flex flex-col gap-1.5">
-            <h2 className="text-lg font-semibold text-slate-100">تحقق من بريدك الإلكتروني</h2>
-            <p className="max-w-sm text-sm leading-relaxed text-slate-400">
-              أرسلنا رابط إعادة تعيين كلمة المرور إلى{' '}
-              <span className="font-medium text-slate-200">{email}</span> إن كان مسجّلًا لدينا.
-              الرابط صالح لمدة 30 دقيقة.
-            </p>
-          </div>
-          <Button variant="outline" onClick={() => setIsSent(false)} className="mt-2">
-            لم يصلك البريد؟ أعد المحاولة
-          </Button>
-          <Link
-            href="/login"
-            className="flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300"
-          >
-            <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
-            العودة إلى تسجيل الدخول
-          </Link>
-        </div>
-      </div>
-    );
-  }
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || t("errors.failedToLoad", undefined, "حدث خطأ أثناء إرسال الطلب"));
+      }
+
+      setSuccess(data.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errors.unexpectedErrorTitle", undefined, "حدث خطأ غير متوقع"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <form noValidate onSubmit={handleSubmit} className={className}>
-      <div className="flex flex-col gap-5">
-        <p className="text-sm leading-relaxed text-slate-400">
-          أدخل بريدك الإلكتروني المسجّل، وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.
-        </p>
+    <Card className="w-full max-w-md mx-auto border-[var(--color-border)] bg-[var(--color-surface)] backdrop-blur-md shadow-2xl">
+      <CardHeader className="text-center space-y-2">
+        <CardTitle className="text-2xl font-bold font-display text-[var(--color-text)]">
+          {t("auth.forgotPasswordTitle", undefined, "استعادة كلمة المرور")}
+        </CardTitle>
+        <CardDescription className="text-[var(--color-text-secondary)]">
+          {t("auth.forgotPasswordDescription", undefined, "أدخل بريدك الإلكتروني وسيتم إرسال رابط إعادة التعيين إليه")}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FormError message={error || undefined} />
+          <FormSuccess message={success || undefined} />
 
-        {serverError && (
-          <div
-            role="alert"
-            className="flex items-start gap-2.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3.5 py-3 text-sm text-red-300"
-          >
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>{serverError}</span>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="forgot-password-email" className="text-sm font-medium text-slate-300">
-            البريد الإلكتروني
-          </label>
-          <div className="relative flex items-center">
-            <Mail className="pointer-events-none absolute start-3 h-4 w-4 text-slate-500" aria-hidden="true" />
+          <FormField label={t("auth.emailLabel", undefined, "البريد الإلكتروني")} required>
             <Input
-              id="forgot-password-email"
               type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="name@example.com"
-              className="ps-9"
+              placeholder="example@domain.com"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError(null);
-              }}
-              error={!!error}
-              aria-invalid={!!error}
-              aria-describedby={error ? 'forgot-password-email-error' : undefined}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              className="dir-ltr text-left"
             />
+          </FormField>
+
+          <Button type="submit" className="w-full h-11" isLoading={loading}>
+            {t("auth.sendResetLink", undefined, "إرسال رابط التعيين")}
+          </Button>
+
+          <div className="text-center text-xs text-[var(--color-text-secondary)] pt-2">
+            {t("auth.rememberedPassword", undefined, "تذكرت كلمة المرور؟")}{" "}
+            <Link
+              href="/auth/login"
+              className="text-blue-400 hover:underline font-semibold"
+            >
+              {t("auth.backToLogin", undefined, "العودة لتسجيل الدخول")}
+            </Link>
           </div>
-          {error && (
-            <p id="forgot-password-email-error" className="text-xs text-red-400">
-              {error}
-            </p>
-          )}
-        </div>
-
-        <Button type="submit" size="lg" isLoading={isSubmitting} className="w-full">
-          إرسال رابط إعادة التعيين
-        </Button>
-
-        <Link
-          href="/login"
-          className="flex items-center justify-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300"
-        >
-          <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
-          العودة إلى تسجيل الدخول
-        </Link>
-      </div>
-    </form>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
-
-export { ForgotPasswordForm };

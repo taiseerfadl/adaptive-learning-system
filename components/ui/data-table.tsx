@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -10,11 +10,18 @@ import {
   type SortingState,
   useReactTable,
   type Column,
-} from '@tanstack/react-table';
-import { ArrowUpDown, ChevronRight, ChevronLeft } from 'lucide-react';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './table';
-import { Button } from './button';
-import { cn } from '@/lib/utils';
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "./table";
+import { Button } from "./button";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -26,7 +33,7 @@ interface DataTableProps<TData, TValue> {
 function DataTable<TData, TValue>({
   columns,
   data,
-  emptyMessage = 'لا توجد بيانات لعرضها',
+  emptyMessage = "لا توجد بيانات لعرضها",
   className,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -42,14 +49,19 @@ function DataTable<TData, TValue>({
   });
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                 </TableHead>
               ))}
             </TableRow>
@@ -58,15 +70,23 @@ function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() ? "selected" : undefined}
+              >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-28 text-center text-slate-500">
+              <TableCell
+                colSpan={columns.length}
+                className="h-28 text-center text-[var(--color-text-muted)]"
+              >
                 {emptyMessage}
               </TableCell>
             </TableRow>
@@ -75,15 +95,26 @@ function DataTable<TData, TValue>({
       </Table>
 
       <div className="flex items-center justify-between">
-        <span className="text-xs text-slate-500">
-          صفحة {table.getState().pagination.pageIndex + 1} من {table.getPageCount() || 1}
+        <span className="text-xs text-[var(--color-text-muted)]">
+          صفحة {table.getState().pagination.pageIndex + 1} من{" "}
+          {table.getPageCount() || 1}
         </span>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
             <ChevronRight className="h-4 w-4" />
             السابق
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
             التالي
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -94,13 +125,19 @@ function DataTable<TData, TValue>({
 }
 
 /** رأس عمود قابل للفرز — يُستخدم داخل تعريف columns الممرّرة إلى DataTable */
-function DataTableSortableHeader<TData>({ column, title }: { column: Column<TData, unknown>; title: string }) {
+function DataTableSortableHeader<TData>({
+  column,
+  title,
+}: {
+  column: Column<TData, unknown>;
+  title: string;
+}) {
   return (
     <Button
       variant="ghost"
       size="sm"
-      className="-ms-3 h-8 gap-1 text-xs font-semibold text-slate-400 hover:text-slate-100"
-      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      className="-ms-3 h-8 gap-1 text-xs font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
     >
       {title}
       <ArrowUpDown className="h-3.5 w-3.5" />

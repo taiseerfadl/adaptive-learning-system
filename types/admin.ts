@@ -1,11 +1,11 @@
-import { User } from './user';
+import { User } from "./user";
 
 /**
  * Admin — "نحن المسؤولون عن كل شيء: نستقبل طلبات التسجيل، نراجع الدورات،
  * نتابع المدفوعات والشكاوى والإحصائيات"
  */
 export interface Admin extends User {
-  accountType: 'admin';
+  accountType: "admin";
 }
 
 /**
@@ -14,9 +14,9 @@ export interface Admin extends User {
 export interface ApprovalRequest {
   id: string;
   applicantId: string; // Instructor or Institution id
-  applicantType: 'trainer' | 'institution';
+  applicantType: "trainer" | "institution";
   submittedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   reviewedBy?: string;
   reviewedAt?: string;
   rejectionReason?: string;
@@ -29,7 +29,7 @@ export interface CourseReviewLog {
   id: string;
   courseId: string;
   reviewedBy: string; // Admin ID
-  decision: 'approved' | 'rejected';
+  decision: "approved" | "rejected";
   notes?: string;
   reviewedAt: string;
 }

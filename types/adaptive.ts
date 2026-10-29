@@ -1,4 +1,4 @@
-import { AdaptiveOutcome } from './attempt';
+import { AdaptiveOutcome } from "./attempt";
 
 /**
  * PlacementResult — "بعد أن أنتهي من الاختبار، يحلل النظام إجاباتي ويحدد مستواي،
@@ -24,9 +24,13 @@ export interface AdaptiveDecisionRule {
 }
 
 export const DEFAULT_ADAPTIVE_RULES: AdaptiveDecisionRule[] = [
-  { minScorePercent: 80, maxScorePercent: 100, outcome: 'advance_to_harder' },
-  { minScorePercent: 40, maxScorePercent: 79.99, outcome: 'repeat_same_level' },
-  { minScorePercent: 0, maxScorePercent: 39.99, outcome: 'return_to_foundational' },
+  { minScorePercent: 80, maxScorePercent: 100, outcome: "advance_to_harder" },
+  { minScorePercent: 40, maxScorePercent: 79.99, outcome: "repeat_same_level" },
+  {
+    minScorePercent: 0,
+    maxScorePercent: 39.99,
+    outcome: "return_to_foundational",
+  },
 ];
 
 /**

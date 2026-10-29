@@ -1,0 +1,11 @@
+import { SystemSettingsForm as Component } from "@/components/admin/system-settings-form";
+
+export default function Page() {
+  return (
+    <Component
+      loading={false}
+      title="إعدادات النظام"
+      description="واجهة إعدادات النظام ضمن مساحة الإدارة. المكوّن الحالي محفوظ؛ استكمال عرض السجلات والإجراءات يتطلب توصيل بيانات هذه الصفحة بالمصدر المعتمد."
+    />
+  );
+}

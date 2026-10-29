@@ -1,82 +1,147 @@
-/* ==========================================================================
-   ARABIC — الخطوط العربية، ضبط اتجاه RTL، ومعالجة الأرقام والبيانات اللاتينية
-   ========================================================================== */
+/* =========================================
+   Arabic Typography & RTL Utilities
+========================================= */
 
-/* ---------- استيراد الخطوط ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+html[dir="rtl"],
+html[lang="ar"] {
+  --font-display: var(--font-cairo), Tahoma, Arial, sans-serif;
+  --font-body: var(--font-cairo), Tahoma, Arial, sans-serif;
+}
 
-/* ---------- ضبط اتجاه المستند ---------- */
-html[dir='rtl'] {
+html[dir="ltr"],
+html[lang="en"] {
+  --font-display: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html[dir="rtl"] {
   direction: rtl;
 }
 
-/* اللغة العربية لا تُكتب بها الحروف بتباعد (letter-spacing) —
-   أي قيمة غير صفرية تكسر اتصال الحروف وتُعد خطأ إملائيًا بصريًا */
-body,
-h1, h2, h3, h4, h5, h6,
-p, span, a, button, input, textarea, label {
-  letter-spacing: 0;
+html[dir="ltr"] {
+  direction: ltr;
 }
 
-/* تحسين عرض الحروف العربية المتصلة والأربطة (ligatures) */
 body {
-  font-feature-settings: 'liga' 1, 'calt' 1, 'kern' 1;
+  font-family: var(--font-body);
   font-kerning: normal;
+  font-variant-numeric: proportional-nums;
 }
 
-/* العناوين تستخدم خط Cairo بثقل أعلى ليعطي حضورًا يشبه اللوحات الأكاديمية */
-h1, h2, h3, h4, h5, h6,
-.font-display {
-  font-family: var(--font-display);
+input,
+textarea,
+select {
+  text-align: start;
 }
 
-/* ---------- عزل الاتجاه للبيانات اللاتينية داخل نص عربي ---------- */
-/* الأرقام، التواريخ، رموز التحقق (Hash)، ونصوص QR يجب أن تبقى LTR
-   حتى داخل سياق عربي كامل، مع عزل اتجاهي يمنع "ارتباك ثنائي الاتجاه" */
-.ltr-embed,
-.num,
-[dir='ltr'] {
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+.ltr-field {
+  direction: ltr;
+  text-align: left;
+}
+
+.ltr-text {
   direction: ltr;
   unicode-bidi: isolate;
-  font-family: var(--font-mono);
 }
 
-/* أرقام الدرجات والنسب المئوية ومعرّفات الشهادات */
+.rtl-text {
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+.text-start {
+  text-align: start;
+}
+
+.text-end {
+  text-align: end;
+}
+
 .score,
 .percentage,
-.certificate-hash,
-.qr-value {
+.qr-value,
+.certificate-hash {
   direction: ltr;
   unicode-bidi: isolate;
   font-variant-numeric: tabular-nums;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
 }
 
-/* ---------- انعكاس الأيقونات الاتجاهية في RTL ---------- */
-/* أيقونات مثل "التالي/رجوع" أو أسهم المسار التكيفي يجب أن تُعكس أفقيًا */
-html[dir='rtl'] .icon-directional {
+.certificate-hash {
+  overflow-wrap: anywhere;
+  font-family: var(--font-mono);
+}
+
+html[dir="rtl"] .icon-directional {
   transform: scaleX(-1);
 }
 
-/* ---------- ضبط المحاذاة المنطقية بدلاً من الفيزيائية ---------- */
-/* استخدام margin-inline / padding-inline في كل الملفات بدل left/right
-   يجعل التبديل بين RTL/LTR (لو احتاج المشروع لاحقًا لواجهة إنجليزية) آمنًا */
-.text-start { text-align: start; }
-.text-end { text-align: end; }
-
-/* ---------- تحسين ارتفاع الأسطر لطول الكلمة العربية ---------- */
-.prose-ar {
-  line-height: var(--leading-relaxed);
-  font-family: var(--font-body);
-  max-width: 68ch;
+html[dir="ltr"] .icon-directional {
+  transform: none;
 }
 
-/* ---------- ضبط الفواصل الرقمية (اختياري: أرقام هندية-عربية) ---------- */
-/* في حال رغبت الواجهة بعرض الأرقام بالصيغة الشرقية (١٢٣) بدل (123)
-   يُفعَّل عبر إضافة الكلاس التالي على العنصر الحاوي فقط، دون كسر
-   عزل الاتجاه الخاص بالبيانات (score/hash) أعلاه */
+.prose-ar {
+  direction: rtl;
+  text-align: right;
+  line-height: var(--leading-relaxed);
+  overflow-wrap: break-word;
+}
+
+.prose-ar > * + * {
+  margin-block-start: 1rem;
+}
+
+.prose-ar ul,
+.prose-ar ol {
+  padding-inline-start: 1.5rem;
+  list-style-position: outside;
+}
+
+.prose-ar ul {
+  list-style-type: disc;
+}
+
+.prose-ar ol {
+  list-style-type: decimal;
+}
+
+.prose-ar li + li {
+  margin-block-start: 0.4rem;
+}
+
+.prose-ar a {
+  color: var(--color-primary-400);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-ar code,
+.prose-ar pre {
+  direction: ltr;
+  text-align: left;
+  font-family: var(--font-mono);
+}
+
+.prose-ar code {
+  padding: 0.15rem 0.35rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-400);
+}
+
+.prose-ar pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-soft);
+}
+
 .numerals-eastern {
   font-variant-numeric: normal;
-  font-feature-settings: 'ss01' 1;
 }

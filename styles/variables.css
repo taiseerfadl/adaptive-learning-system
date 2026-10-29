@@ -1,78 +1,104 @@
-/* ==========================================================================
-   VARIABLES — نظام تصميم منصة التعلم التكيفي
-   الهوية: "حبر ليلي + ختم ذهبي" — مستوحاة من التوثيق الأكاديمي الرقمي
-   (الشهادات، التوقيع الرقمي، رمز QR) والمسار التكيفي المتفرع للطالب.
-   ========================================================================== */
+/* =========================================
+   Adaptive Learning System
+   Unified Design Tokens
+   Navy + Blue | Dark & Light Themes
+========================================= */
 
-:root {
-  /* ---------- الألوان: طبقات الحبر (الخلفيات) ---------- */
-  --color-ink-950: #0b0c14;   /* الخلفية الأعمق */
-  --color-ink-900: #12141f;   /* خلفية الصفحة الأساسية */
-  --color-ink-800: #1a1d2b;   /* سطح البطاقات */
-  --color-ink-700: #232739;   /* سطح مرتفع (Modals, Dropdowns) */
-  --color-ink-600: #2f3448;   /* الحدود والفواصل */
-  --color-ink-500: #454b64;   /* حدود تفاعلية / أيقونات ثانوية */
+/* ---------- Dark Theme ---------- */
+:root,
+.dark {
+  color-scheme: dark;
 
-  /* ---------- الألوان: الورق (النصوص) ---------- */
-  --color-paper-100: #f3f0e8; /* النص الأساسي — أبيض دافئ كالورق */
-  --color-paper-300: #cbc7ba; /* النص الثانوي */
-  --color-paper-500: #8d8a7c; /* نص خافت / placeholders */
+  /* Backgrounds */
+  --color-bg: #080f1e;
+  --color-bg-soft: #0d1729;
+  --color-surface: #111e33;
+  --color-surface-elevated: #172640;
+  --color-surface-hover: #1d304d;
 
-  /* ---------- اللون المحوري: الختم الذهبي ---------- */
-  --color-gold-300: #e3c98a;
-  --color-gold-400: #d9b579;
-  --color-gold-500: #c9a15a;  /* اللون المحوري للعلامة والتفاعل */
-  --color-gold-600: #a8813f;
-  --color-gold-glow: rgba(201, 161, 90, 0.35);
+  /* Borders */
+  --color-border: #263955;
+  --color-border-strong: #354c6c;
 
-  /* ---------- لون تفاعلي ثانوي (روابط/أزرار ثانوية) ---------- */
-  --color-azure-400: #7ea3f0;
-  --color-azure-500: #5b8def;
+  /* Text */
+  --color-text: #f1f5fb;
+  --color-text-secondary: #c0ccdc;
+  --color-text-muted: #899bb3;
+  --color-text-inverse: #081326;
 
-  /* ---------- ألوان تصنيف الطلاب (🟢🟡🔴) — جزء من الهوية لا إضافة عليها ---------- */
-  --color-advanced-500: #4bab7c;
-  --color-advanced-100: rgba(75, 171, 124, 0.14);
-  --color-advanced-border: rgba(75, 171, 124, 0.4);
+  /* Primary: Blue */
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-soft: rgb(59 130 246 / 14%);
+  --color-primary-border: rgb(96 165 250 / 35%);
 
-  --color-intermediate-500: #dfa64d;
-  --color-intermediate-100: rgba(223, 166, 77, 0.14);
-  --color-intermediate-border: rgba(223, 166, 77, 0.4);
+  /* Secondary: Navy */
+  --color-navy-700: #183153;
+  --color-navy-800: #102441;
+  --color-navy-900: #0b1930;
+  --color-navy-950: #060d1a;
 
-  --color-support-500: #e2665a;
-  --color-support-100: rgba(226, 102, 90, 0.14);
-  --color-support-border: rgba(226, 102, 90, 0.4);
+  /* Semantic Colors */
+  --color-success: #34d399;
+  --color-success-soft: rgb(52 211 153 / 12%);
+  --color-warning: #fbbf24;
+  --color-warning-soft: rgb(251 191 36 / 12%);
+  --color-danger: #fb7185;
+  --color-danger-soft: rgb(251 113 133 / 12%);
+  --color-info: #38bdf8;
+  --color-info-soft: rgb(56 189 248 / 12%);
 
-  /* ---------- حالات النظام ---------- */
-  --color-success: var(--color-advanced-500);
-  --color-warning: var(--color-intermediate-500);
-  --color-danger: var(--color-support-500);
-  --color-info: var(--color-azure-500);
+  /* Learning Levels */
+  --color-advanced: #34d399;
+  --color-advanced-bg: rgb(16 185 129 / 12%);
+  --color-advanced-border: rgb(52 211 153 / 30%);
 
-  /* ---------- الطباعة (Typography) ---------- */
-  --font-display: 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  --font-body: 'Tajawal', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --color-intermediate: #fbbf24;
+  --color-intermediate-bg: rgb(245 158 11 / 12%);
+  --color-intermediate-border: rgb(251 191 36 / 30%);
 
-  /* سلم الأحجام (Fluid Type Scale) */
-  --text-xs:   clamp(0.72rem, 0.68rem + 0.2vw, 0.78rem);
-  --text-sm:   clamp(0.84rem, 0.8rem + 0.2vw, 0.9rem);
-  --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1rem);
-  --text-lg:   clamp(1.05rem, 1rem + 0.3vw, 1.15rem);
-  --text-xl:   clamp(1.25rem, 1.15rem + 0.5vw, 1.45rem);
-  --text-2xl:  clamp(1.6rem, 1.4rem + 1vw, 1.95rem);
-  --text-3xl:  clamp(2rem, 1.7rem + 1.5vw, 2.6rem);
-  --text-4xl:  clamp(2.6rem, 2.1rem + 2.4vw, 3.6rem);
+  --color-support: #fb7185;
+  --color-support-bg: rgb(244 63 94 / 12%);
+  --color-support-border: rgb(251 113 133 / 30%);
 
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 18%);
+  --shadow-md: 0 10px 30px rgb(0 0 0 / 25%);
+  --shadow-lg: 0 20px 50px rgb(0 0 0 / 35%);
+  --shadow-glow: 0 0 24px rgb(59 130 246 / 18%);
+
+  /* Typography */
+  --font-display: var(--font-cairo), Tahoma, Arial, sans-serif;
+  --font-body: var(--font-cairo), Tahoma, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Line Heights */
   --leading-tight: 1.25;
-  --leading-normal: 1.6;
-  --leading-relaxed: 1.85;   /* النص العربي يحتاج تباعد أسطر أكبر */
+  --leading-normal: 1.7;
+  --leading-relaxed: 1.85;
 
-  --weight-regular: 400;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --weight-bold: 700;
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
 
-  /* ---------- المسافات (Spacing Scale — أساس 4px) ---------- */
+  /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -82,38 +108,102 @@
   --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
 
-  /* ---------- الحواف والاستدارة ---------- */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
-  --radius-full: 999px;
+  /* Layout */
+  --container-max: 1280px;
+  --container-padding: 1rem;
 
-  /* ---------- الظلال (مصممة لخلفية داكنة) ---------- */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
-  --shadow-gold-glow: 0 0 0 1px var(--color-gold-500),
-                       0 0 24px var(--color-gold-glow);
-
-  /* ---------- الحركة ---------- */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Motion */
   --duration-fast: 150ms;
-  --duration-base: 280ms;
-  --duration-slow: 480ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ---------- طبقات العرض (Z-Index Scale) ---------- */
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-overlay: 300;
-  --z-modal: 400;
-  --z-toast: 500;
+  /* Layering */
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-modal: 1300;
+  --z-toast: 1400;
+}
 
-  /* ---------- الحاوية (Container) ---------- */
-  --container-max: 1240px;
-  --container-padding: clamp(1rem, 4vw, 2.5rem);
+/* ---------- Light Theme ---------- */
+.light {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-bg: #f4f7fc;
+  --color-bg-soft: #edf2fa;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-hover: #eaf1fb;
+
+  /* Borders */
+  --color-border: #d8e2f0;
+  --color-border-strong: #b8c9df;
+
+  /* Text */
+  --color-text: #10213b;
+  --color-text-secondary: #40536e;
+  --color-text-muted: #6b7c93;
+  --color-text-inverse: #ffffff;
+
+  /* Primary: Blue */
+  --color-primary-300: #60a5fa;
+  --color-primary-400: #3b82f6;
+  --color-primary-500: #2563eb;
+  --color-primary-600: #1d4ed8;
+  --color-primary-700: #1e40af;
+  --color-primary-soft: rgb(37 99 235 / 9%);
+  --color-primary-border: rgb(37 99 235 / 25%);
+
+  /* Secondary: Navy */
+  --color-navy-700: #24466f;
+  --color-navy-800: #183153;
+  --color-navy-900: #102441;
+  --color-navy-950: #0b1930;
+
+  /* Semantic Colors */
+  --color-success: #047857;
+  --color-success-soft: #d1fae5;
+  --color-warning: #a16207;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #be123c;
+  --color-danger-soft: #ffe4e6;
+  --color-info: #0369a1;
+  --color-info-soft: #e0f2fe;
+
+  /* Learning Levels */
+  --color-advanced: #047857;
+  --color-advanced-bg: #d1fae5;
+  --color-advanced-border: #a7f3d0;
+
+  --color-intermediate: #a16207;
+  --color-intermediate-bg: #fef3c7;
+  --color-intermediate-border: #fde68a;
+
+  --color-support: #be123c;
+  --color-support-bg: #ffe4e6;
+  --color-support-border: #fecdd3;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgb(16 33 59 / 6%);
+  --shadow-md: 0 10px 30px rgb(16 33 59 / 10%);
+  --shadow-lg: 0 20px 50px rgb(16 33 59 / 14%);
+  --shadow-glow: 0 0 24px rgb(37 99 235 / 10%);
+}
+
+/* ---------- Responsive Layout ---------- */
+@media (min-width: 640px) {
+  :root {
+    --container-padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-padding: 2rem;
+  }
 }

@@ -1,36 +1,42 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from "react";
+import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+interface SearchInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange"
+> {
   value: string;
   onChange: (value: string) => void;
   onClear?: () => void;
 }
 
 const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ value, onChange, onClear, className, placeholder = 'بحث...', ...props }, ref) => {
+  (
+    { value, onChange, onClear, className, placeholder = "بحث...", ...props },
+    ref,
+  ) => {
     return (
-      <div className={cn('relative flex items-center', className)}>
-        <Search className="pointer-events-none absolute start-3 h-4 w-4 text-slate-500" />
+      <div className={cn("relative flex items-center", className)}>
+        <Search className="pointer-events-none absolute start-3 h-4 w-4 text-[var(--color-text-muted)]" />
         <input
           ref={ref}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="h-10 w-full rounded-lg border border-slate-700 bg-slate-900 ps-9 pe-9 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500"
+          className="h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] ps-9 pe-9 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500"
           {...props}
         />
         {value && (
           <button
             type="button"
             onClick={() => {
-              onChange('');
+              onChange("");
               onClear?.();
             }}
-            className="absolute end-3 rounded-md p-0.5 text-slate-500 hover:text-slate-200"
+            className="absolute end-3 rounded-md p-0.5 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
             aria-label="مسح البحث"
           >
             <X className="h-4 w-4" />
@@ -38,8 +44,8 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         )}
       </div>
     );
-  }
+  },
 );
-SearchInput.displayName = 'SearchInput';
+SearchInput.displayName = "SearchInput";
 
 export { SearchInput };

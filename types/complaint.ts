@@ -1,4 +1,4 @@
-export type ComplaintStatus = 'open' | 'in_progress' | 'resolved';
+export type ComplaintStatus = "open" | "in_progress" | "resolved";
 
 /**
  * Complaint — "نتابع عمليات الدفع، والشكاوى، والإحصائيات"

@@ -1,6 +1,8 @@
-import * as React from 'react';
-import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { cn } from '@/lib/utils';
+"use client";
+
+import * as React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { cn } from "@/lib/utils";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -10,7 +12,10 @@ const TabsList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
-    className={cn('inline-flex h-11 items-center gap-1 rounded-lg bg-slate-900 p-1 border border-slate-800', className)}
+    className={cn(
+      "inline-flex h-11 items-center gap-1 rounded-lg bg-[var(--color-surface)] p-1 border border-[var(--color-border)]",
+      className,
+    )}
     {...props}
   />
 ));
@@ -23,11 +28,11 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium text-slate-400 transition-colors',
-      'hover:text-slate-200',
-      'data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-      className
+      "inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors",
+      "hover:text-[var(--color-text)]",
+      "data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50",
+      className,
     )}
     {...props}
   />
@@ -38,7 +43,11 @@ const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content ref={ref} className={cn('mt-4 focus-visible:outline-none', className)} {...props} />
+  <TabsPrimitive.Content
+    ref={ref}
+    className={cn("mt-4 focus-visible:outline-none", className)}
+    {...props}
+  />
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 

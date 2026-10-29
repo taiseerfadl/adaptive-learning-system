@@ -1,4 +1,4 @@
-export type LiveSessionStatus = 'scheduled' | 'live' | 'ended' | 'cancelled';
+export type LiveSessionStatus = "scheduled" | "live" | "ended" | "cancelled";
 
 /**
  * LiveSession — ميزة "فتح غرف بث مباشر" المذكورة كإضافة على النظام العام

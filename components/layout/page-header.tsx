@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
-import { Breadcrumbs, type BreadcrumbItem } from './breadcrumbs';
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
 
 interface PageHeaderProps {
   title: string;
@@ -25,15 +25,23 @@ function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn('flex flex-col gap-4 pb-6', className)}>
+    <div className={cn("flex flex-col gap-4 pb-6", className)}>
       {showBreadcrumbs && <Breadcrumbs items={breadcrumbItems} />}
 
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex flex-col gap-1.5">
-          <h1 className="text-2xl font-bold text-slate-100">{title}</h1>
-          {description && <p className="max-w-2xl text-sm leading-relaxed text-slate-500">{description}</p>}
+          <h1 className="text-2xl font-bold text-[var(--color-text)]">
+            {title}
+          </h1>
+          {description && (
+            <p className="max-w-2xl text-sm leading-relaxed text-[var(--color-text-muted)]">
+              {description}
+            </p>
+          )}
         </div>
-        {actions && <div className="flex shrink-0 items-center gap-2.5">{actions}</div>}
+        {actions && (
+          <div className="flex shrink-0 items-center gap-2.5">{actions}</div>
+        )}
       </div>
     </div>
   );

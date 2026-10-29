@@ -1,137 +1,119 @@
-'use client';
+"use client";
 
-/**
- * AuthContext — المصدر الموحّد لحالة المصادقة في التطبيق بالكامل.
- *
- * ملاحظة معمارية: هذا الملف داعم (وليس ضمن لقطة الشاشة المطلوبة) لكنه ضروري
- * لعمل ملفات auth/* بدون أخطاء — فهي تعتمد عليه لجلب المستخدم الحالي وتنفيذ
- * تسجيل الدخول/الخروج، بدلاً من أن يكرر كل نموذج منطق الشبكة بنفسه.
- * لا يضيف أي حزمة خارجية غير مذكورة في README (React الأساسي فقط).
- */
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
-import * as React from 'react';
-import type { AuthResponse, LoginDTO, RegisterDTO, User } from '@/types';
+import type { User } from "@/types/user";
 
-const ACCESS_TOKEN_KEY = 'als_access_token';
-const REFRESH_TOKEN_KEY = 'als_refresh_token';
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
-
-interface AuthContextValue {
-  /** المستخدم الحالي، أو null قبل انتهاء التحقق أو في حال عدم تسجيل الدخول */
+export interface AuthContextValue {
   user: User | null;
-  /** true أثناء التحقق الأولي من الجلسة عند تحميل التطبيق */
-  isLoading: boolean;
+  loading: boolean;
   isAuthenticated: boolean;
-  login: (data: LoginDTO) => Promise<User>;
-  register: (data: RegisterDTO) => Promise<User>;
-  logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = React.createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(
+  undefined,
+);
 
-async function parseAuthResponse(res: Response): Promise<AuthResponse> {
-  const body = await res.json().catch(() => null);
-  if (!res.ok || !body?.data) {
-    const message = body?.message ?? 'تعذّر إتمام العملية، حاول مرة أخرى';
-    throw new Error(message);
-  }
-  return body.data as AuthResponse;
+interface AuthProviderProps {
+  children: ReactNode;
 }
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<User | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const persistTokens = React.useCallback((data: AuthResponse) => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.tokens.accessToken);
-    localStorage.setItem(REFRESH_TOKEN_KEY, data.tokens.refreshToken);
-  }, []);
-
-  const refreshUser = React.useCallback(async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (!token) {
-      setUser(null);
-      setIsLoading(false);
-      return;
-    }
+  const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+      let response = await fetch("/api/auth/me", {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
       });
-      if (!res.ok) throw new Error('unauthenticated');
-      const body = await res.json();
-      setUser(body.data as User);
-    } catch {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
+
+      // إذا انتهت صلاحية Access Token، نحاول تجديده تلقائياً بواسطة Refresh Token
+      if (response.status === 401) {
+        const refreshResponse = await fetch("/api/auth/refresh", {
+          method: "POST",
+          credentials: "include",
+        });
+
+        // إذا نجح التجديد، نعيد محاولة جلب البيانات
+        if (refreshResponse.ok) {
+          response = await fetch("/api/auth/me", {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+          });
+        }
+      }
+
+      if (!response.ok) {
+        setUser(null);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.authenticated && data.user) {
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error("AUTH_CONTEXT_ERROR:", error);
       setUser(null);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, []);
 
-  React.useEffect(() => {
-    refreshUser();
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("LOGOUT_ERROR:", error);
+    } finally {
+      setUser(null);
+      window.location.href = "/auth/login";
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshUser();
   }, [refreshUser]);
 
-  const login = React.useCallback(
-    async (data: LoginDTO) => {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const auth = await parseAuthResponse(res);
-      persistTokens(auth);
-      setUser(auth.user);
-      return auth.user;
-    },
-    [persistTokens]
-  );
-
-  const register = React.useCallback(
-    async (data: RegisterDTO) => {
-      const res = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const auth = await parseAuthResponse(res);
-      persistTokens(auth);
-      setUser(auth.user);
-      return auth.user;
-    },
-    [persistTokens]
-  );
-
-  const logout = React.useCallback(async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    setUser(null);
-    if (token) {
-      fetch(`${API_BASE_URL}/auth/logout`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      }).catch(() => {
-        /* تسجيل الخروج محليًا يبقى ساريًا حتى لو فشل نداء الخادم */
-      });
-    }
-  }, []);
-
-  const value = React.useMemo<AuthContextValue>(
-    () => ({ user, isLoading, isAuthenticated: !!user, login, register, logout, refreshUser }),
-    [user, isLoading, login, register, logout, refreshUser]
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      isAuthenticated: user !== null,
+      refreshUser,
+      logout,
+    }),
+    [user, loading, refreshUser, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+import { useContext } from "react";
 
-export function useAuth(): AuthContextValue {
-  const ctx = React.useContext(AuthContext);
-  if (!ctx) {
-    throw new Error('useAuth يجب أن يُستخدم داخل <AuthProvider>');
+// أضف هذه الدالة في نهاية الملف وقم بعمل export لها
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return ctx;
+  return context;
 }

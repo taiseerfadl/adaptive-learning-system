@@ -1,6 +1,6 @@
-import { User } from './user';
+import { User } from "./user";
 
-export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+export type ApprovalStatus = "pending" | "approved" | "rejected";
 
 /**
  * Instructor (Trainer) — "أنشئ حسابًا كمدرب، ثم أرسل بياناتي وسيرتي الذاتية
@@ -8,7 +8,7 @@ export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
  * ملاحظة: يمنح شهادة حضور فقط (وليس معتمدة) — "لأنها ليست صادرة من مؤسسة تعليمية معتمدة"
  */
 export interface Instructor extends User {
-  accountType: 'trainer';
+  accountType: "trainer";
   cvUrl: string;
   bio?: string;
   approvalStatus: ApprovalStatus;

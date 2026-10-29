@@ -1,4 +1,4 @@
-export type QuizType = 'placement_test' | 'short_quiz';
+export type QuizType = "placement_test" | "short_quiz";
 
 /**
  * Assessment — "سيظهر لكل طالب اختبار تحديد مستوى" و"اختبار قصير بعد كل درس

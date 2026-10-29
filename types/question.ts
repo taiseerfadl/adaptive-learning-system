@@ -1,4 +1,4 @@
-export type QuestionType = 'multiple_choice' | 'true_false' | 'short_answer';
+export type QuestionType = "multiple_choice" | "true_false" | "short_answer";
 
 /**
  * Question — أسئلة اختبار تحديد المستوى/الاختبارات القصيرة، مرتبطة بمهارة محددة

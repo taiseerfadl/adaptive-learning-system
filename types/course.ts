@@ -1,5 +1,5 @@
-export type PriceType = 'free' | 'paid';
-export type CourseStatus = 'draft' | 'under_review' | 'published' | 'rejected';
+export type PriceType = "free" | "paid";
+export type CourseStatus = "draft" | "under_review" | "published" | "rejected";
 
 /**
  * Course — "هل الدورة مجانية أم مدفوعة؟ ثم أكتب اسم الدورة ووصفها وأهدافها"
@@ -12,7 +12,7 @@ export interface Course {
   priceType: PriceType;
   price: number; // 0 إذا كانت مجانية
   status: CourseStatus;
-  createdByType: 'trainer' | 'institution';
+  createdByType: "trainer" | "institution";
   createdById: string;
   createdAt: string;
   updatedAt: string;

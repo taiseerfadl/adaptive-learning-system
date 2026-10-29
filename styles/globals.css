@@ -1,199 +1,394 @@
-/* ==========================================================================
-   GLOBALS — إعادة الضبط الأساسية، الهيكل العام، والطباعة الافتراضية
-   يعتمد على المتغيرات المعرّفة في variables.css
-   ========================================================================== */
+/* =========================================
+   Adaptive Learning System
+   Global Styles
+========================================= */
 
-/* ---------- إعادة الضبط ---------- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Import the design system and supporting styles */
+@import "./variables.css";
+@import "./arabic.css";
+@import "./animations.css";
+@import "./scrollbar.css";
 
-html {
-  block-size: 100%;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  scroll-behavior: smooth;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  min-block-size: 100%;
-  background-color: var(--color-ink-900);
-  color: var(--color-paper-100);
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  line-height: var(--leading-relaxed);
-  font-weight: var(--weight-regular);
-  direction: rtl;
-  text-align: right;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* خلفية دقيقة بنسيج "الورق الليلي" — بدون أي تشتيت بصري */
-body {
-  background-image:
-    radial-gradient(circle at 15% -10%, rgba(201, 161, 90, 0.06), transparent 45%),
-    radial-gradient(circle at 100% 10%, rgba(91, 141, 239, 0.05), transparent 40%);
-  background-attachment: fixed;
-}
-
-img,
-picture,
-video,
-svg {
-  display: block;
-  max-inline-size: 100%;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-}
-
-button {
-  cursor: pointer;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-/* ---------- الطباعة ---------- */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-tight);
-  color: var(--color-paper-100);
-}
-
-h1 { font-size: var(--text-4xl); }
-h2 { font-size: var(--text-3xl); }
-h3 { font-size: var(--text-2xl); }
-h4 { font-size: var(--text-xl); }
-h5 { font-size: var(--text-lg); }
-
-p {
-  color: var(--color-paper-300);
-  line-height: var(--leading-relaxed);
-}
-
-small {
-  font-size: var(--text-xs);
-  color: var(--color-paper-500);
-}
-
-/* ---------- التحديد والتركيز ---------- */
-::selection {
-  background-color: var(--color-gold-500);
-  color: var(--color-ink-950);
-}
-
-:focus {
-  outline: none;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-gold-400);
-  outline-offset: 3px;
-  border-radius: var(--radius-sm);
-}
-
-/* ---------- الحاوية العامة ---------- */
-.container {
-  width: 100%;
-  max-width: var(--container-max);
-  margin-inline: auto;
-  padding-inline: var(--container-padding);
-}
-
-/* ---------- بطاقة سطحية أساسية (Surface) ---------- */
-.surface {
-  background-color: var(--color-ink-800);
-  border: 1px solid var(--color-ink-600);
-  border-radius: var(--radius-lg);
-}
-
-.surface--elevated {
-  background-color: var(--color-ink-700);
-  box-shadow: var(--shadow-md);
-}
-
-/* ---------- شارة الختم الذهبي (عنصر التوقيع البصري) ---------- */
-.seal-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding-inline: var(--space-4);
-  padding-block: var(--space-2);
-  border: 1px solid var(--color-gold-500);
-  border-radius: var(--radius-full);
-  color: var(--color-gold-400);
-  font-family: var(--font-display);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-sm);
-}
-
-/* ---------- شارات تصنيف الطلاب (🟢🟡🔴) ---------- */
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding-inline: var(--space-3);
-  padding-block: var(--space-1);
-  border-radius: var(--radius-full);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  border: 1px solid transparent;
-}
-
-.status-pill--advanced {
-  background-color: var(--color-advanced-100);
-  border-color: var(--color-advanced-border);
-  color: var(--color-advanced-500);
-}
-
-.status-pill--intermediate {
-  background-color: var(--color-intermediate-100);
-  border-color: var(--color-intermediate-border);
-  color: var(--color-intermediate-500);
-}
-
-.status-pill--support {
-  background-color: var(--color-support-100);
-  border-color: var(--color-support-border);
-  color: var(--color-support-500);
-}
-
-/* ---------- إمكانية الوصول: تقليل الحركة ---------- */
-@media (prefers-reduced-motion: reduce) {
+/* ---------- Base ---------- */
+@layer base {
   html {
-    scroll-behavior: auto;
+    min-block-size: 100%;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background-color: var(--color-bg);
   }
+
+  body {
+    min-block-size: 100vh;
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-feature-settings:
+      "ss01" on,
+      "ss02" on;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color var(--duration-base) var(--ease-standard),
+      color var(--duration-base) var(--ease-standard);
+  }
+
+  html[dir="rtl"] body {
+    direction: rtl;
+    text-align: right;
+  }
+
+  html[dir="ltr"] body {
+    direction: ltr;
+    text-align: left;
+  }
+
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    box-sizing: border-box;
   }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  img,
+  video {
+    block-size: auto;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    color: inherit;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 4vw, var(--text-4xl));
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3vw, var(--text-3xl));
+  }
+
+  h3 {
+    font-size: var(--text-2xl);
+  }
+
+  h4 {
+    font-size: var(--text-xl);
+  }
+
+  h5 {
+    font-size: var(--text-lg);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+  }
+
+  small {
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+  }
+
+  ::selection {
+    background-color: var(--color-primary-600);
+    color: #ffffff;
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary-400);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------- Shared Components ---------- */
+@layer components {
+  .container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  .surface {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition:
+      background-color var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard);
+  }
+
+  .surface--elevated {
+    background-color: var(--color-surface-elevated);
+    box-shadow: var(--shadow-md);
+  }
+
+  .surface--interactive {
+    cursor: pointer;
+  }
+
+  .surface--interactive:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-primary-400);
+  }
+
+  .primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0.65rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: var(--color-primary-600);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-standard),
+      transform var(--duration-fast) var(--ease-standard);
+  }
+
+  .primary-button:hover {
+    background-color: var(--color-primary-700);
+  }
+  .primary-button:active {
+    transform: translateY(1px);
+  }
+
+  .secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0.65rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .secondary-button:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-primary-400);
+  }
+
+  .input-field {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    outline: none;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard);
+  }
+
+  .input-field::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .input-field:focus {
+    border-color: var(--color-primary-400);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+  }
+
+  .seal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-400);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .status-pill--advanced,
+  .status-pill--intermediate,
+  .status-pill--support {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 600;
+  }
+
+  .status-pill--advanced {
+    color: var(--color-advanced);
+    background-color: var(--color-advanced-bg);
+    border-color: var(--color-advanced-border);
+  }
+
+  .status-pill--intermediate {
+    color: var(--color-intermediate);
+    background-color: var(--color-intermediate-bg);
+    border-color: var(--color-intermediate-border);
+  }
+
+  .status-pill--support {
+    color: var(--color-support);
+    background-color: var(--color-support-bg);
+    border-color: var(--color-support-border);
+  }
+}
+
+/* ---------- Theme-aware Utilities ---------- */
+@layer utilities {
+  .text-primary {
+    color: var(--color-primary-500);
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  .bg-app {
+    background-color: var(--color-bg);
+  }
+
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+
+  .border-app {
+    border-color: var(--color-border);
+  }
+
+  .text-start {
+    text-align: start;
+  }
+
+  .text-end {
+    text-align: end;
+  }
+
+  .content-auto {
+    content-visibility: auto;
+  }
+}
+/* ---------- Theme-aware Form Controls ---------- */
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="submit"]
+  ):not([type="button"]):not([type="reset"]):not([type="file"]),
+textarea,
+select {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary-400);
+  outline: none;
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: var(--color-bg-soft);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-primary-600);
+}
+
+option {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
 }

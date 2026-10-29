@@ -1,0 +1,37 @@
+/*
+  Import this file from styles/globals.css:
+  @import './language.css';
+
+  This file changes direction/font defaults only.
+  It does NOT translate hard-coded UI strings.
+*/
+
+html[data-language='ar'] {
+  direction: rtl;
+}
+
+html[data-language='en'] {
+  direction: ltr;
+}
+
+/* Do not force capitalize/uppercase/lowercase globally. */
+html,
+body,
+button,
+input,
+textarea,
+select {
+  text-transform: none;
+}
+
+/* Optional language-specific font variables; use only if these fonts exist. */
+html[data-language='ar'] body {
+  font-family: var(--font-cairo), Arial, sans-serif;
+}
+
+html[data-language='en'] body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Avoid forcing all elements to LTR/RTL: code, email, URLs and phone numbers
+   may need their own dir="ltr" regardless of the current UI language. */

@@ -1,13 +1,19 @@
-import * as React from 'react';
-import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import { Circle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+"use client";
+
+import * as React from "react";
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
+import { Circle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
 >(({ className, ...props }, ref) => (
-  <RadioGroupPrimitive.Root ref={ref} className={cn('grid gap-3', className)} {...props} />
+  <RadioGroupPrimitive.Root
+    ref={ref}
+    className={cn("grid gap-3", className)}
+    {...props}
+  />
 ));
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -18,11 +24,11 @@ const RadioGroupItem = React.forwardRef<
   <RadioGroupPrimitive.Item
     ref={ref}
     className={cn(
-      'aspect-square h-5 w-5 rounded-full border border-slate-600 text-blue-500 transition-colors',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-      'data-[state=checked]:border-blue-500',
-      'disabled:cursor-not-allowed disabled:opacity-50',
-      className
+      "aspect-square h-5 w-5 rounded-full border border-[var(--color-border-strong)] text-blue-500 transition-colors",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50",
+      "data-[state=checked]:border-blue-500",
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      className,
     )}
     {...props}
   >
